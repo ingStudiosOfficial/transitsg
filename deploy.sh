@@ -48,6 +48,7 @@ fi
 
 if [[ ! -v NUXT_DATAMALL_API_KEY ]]; then
 	read -sp "LTA DataMall API key: " DATAMALL_KEY
+	echo ""
 	echo "NUXT_DATAMALL_API_KEY=$DATAMALL_KEY" >> .env
 fi
 
