@@ -31,13 +31,17 @@ const { data: trainServiceMessages } = await useFetch<TrainServiceMessage[]>(
 
 const { data: trafficIncidents } = await useFetch<TrafficIncident[]>('/api/traffic-incidents');
 
-const pinnedBusStops = await getPinnedBusStops();
+const pinnedBusStops = ref<BusStop[]>([]);
 
 function goToRoute(name: string) {
 	router.push({
 		name: name,
 	});
 }
+
+onMounted(async () => {
+	pinnedBusStops.value = await getPinnedBusStops();
+});
 </script>
 
 <template>
