@@ -42,7 +42,7 @@ const textColor = computed(() => {
 	</m3e-card>
 </template>
 
-<style scoped lang="css">
+<style lang="css" scoped>
 .header {
 	background-color: v-bind(stationColor);
 	color: v-bind(textColor);
