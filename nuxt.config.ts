@@ -58,6 +58,9 @@ export default defineNuxtConfig({
 	pwa: {
 		registerType: 'autoUpdate',
 		strategies: 'generateSW',
+		client: {
+			installPrompt: true,
+		},
 		manifest: {
 			short_name: 'transitsg',
 			name: 'transitsg',
@@ -93,7 +96,7 @@ export default defineNuxtConfig({
 		workbox: {
 			globPatterns: ['**/*.{html,css,js,png,svg,ico,json}'],
 			globDirectory: 'dist',
-			cacheId: '4',
+			cacheId: '5',
 			cleanupOutdatedCaches: true,
 			clientsClaim: true,
 			skipWaiting: true,

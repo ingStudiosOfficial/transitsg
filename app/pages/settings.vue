@@ -17,12 +17,22 @@ useSeoMeta({
 	ogImageHeight: 630,
 	ogSiteName: 'transitsg - all your Singapore transit needs in one app',
 });
+
+const { $pwa } = useNuxtApp();
 </script>
 
 <template>
 	<div class="bg">
 		<div class="pg">
 			<m3e-heading class="heading" variant="headline" size="large">Settings</m3e-heading>
+			<m3e-callout v-if="!$pwa?.isPWAInstalled && $pwa?.showInstallPrompt">
+				<Icon slot="icon" name="material-symbols:install-desktop-outline" />
+				<span slot="label">Install app</span>
+				<span>Install transitsg as an app to quickly access it from your home screen</span>
+				<div class="content">
+					<m3e-button variant="text" @click="$pwa.install()">Install</m3e-button>
+				</div>
+			</m3e-callout>
 		</div>
 	</div>
 </template>
@@ -51,5 +61,13 @@ useSeoMeta({
 
 .heading {
 	color: var(--md-sys-color-on-surface);
+}
+
+m3e-callout {
+	.content {
+		display: flex;
+		flex-direction: column;
+		align-items: end;
+	}
 }
 </style>
