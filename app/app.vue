@@ -8,6 +8,8 @@ const router = useRouter();
 
 const { isDark } = useTheme();
 
+const { isMobile } = useMobile();
+
 const { data: geojson } = await useFetch<Geojson>('/api/bus-stops');
 
 const allStops = computed(() => {
@@ -18,6 +20,7 @@ const allStops = computed(() => {
 const searchInput = useTemplateRef<HTMLInputElement>('searchInput');
 
 const searchSuggestions = ref<BusStop[]>([]);
+const isMenuOpen = ref<boolean>(false);
 
 const routePath = computed(() => {
 	return route.path.toLowerCase() || '';
@@ -41,36 +44,57 @@ function goToRoute(name: string) {
 		name: name,
 	});
 }
+
+function toggleMenuSidebar() {
+	isMenuOpen.value = !isMenuOpen.value;
+}
+
+function closeMenuSidebar() {
+	isMenuOpen.value = false;
+}
 </script>
 
 <template>
 	<div id="content" class="content" :class="isDark ? 'dark' : 'light'">
 		<ClientOnly>
-			<m3e-app-bar class="app-bar" centered>
-				<div slot="title" class="app-bar-content">
-					<m3e-search-view class="search-bar" contained @query="startSearch()">
-						<!-- eslint-disable vue/html-self-closing -->
-						<input
-							ref="searchInput"
-							slot="input"
-							placeholder="Search bus and MRT stops..."
-						/>
-						<!-- eslint-enable vue/html-self-closing -->
-						<m3e-action-list>
-							<m3e-list-action
-								v-for="stop in searchSuggestions"
-								:key="stop.code"
-								v-vibrate
-								@click="goToStop(stop.code)"
-							>
-								{{ stop.name }}
-							</m3e-list-action>
-						</m3e-action-list>
-					</m3e-search-view>
-				</div>
-			</m3e-app-bar>
+			<div class="app-bar-content">
+				<m3e-icon-button class="menu-button" @click="toggleMenuSidebar()">
+					<Icon name="material-symbols:menu-outline" />
+				</m3e-icon-button>
+				<m3e-search-view
+					class="search-bar"
+					contained
+					:hide-search-icon="isMobile"
+					:mode="isMobile ? 'fullscreen' : 'docked'"
+					@query="startSearch()"
+				>
+					<!-- eslint-disable vue/html-self-closing -->
+					<input
+						ref="searchInput"
+						slot="input"
+						placeholder="Search bus and MRT stops..."
+					/>
+					<!-- eslint-enable vue/html-self-closing -->
+					<m3e-action-list>
+						<m3e-list-action
+							v-for="stop in searchSuggestions"
+							:key="stop.code"
+							v-vibrate
+							@click="goToStop(stop.code)"
+						>
+							{{ stop.name }}
+						</m3e-list-action>
+					</m3e-action-list>
+				</m3e-search-view>
+			</div>
 		</ClientOnly>
-		<div class="bottom">
+		<div
+			class="bottom"
+			:class="{
+				tint: isMenuOpen,
+			}"
+			@click="isMenuOpen && closeMenuSidebar()"
+		>
 			<ClientOnly>
 				<m3e-nav-rail class="nav-rail">
 					<m3e-nav-item
@@ -109,7 +133,30 @@ function goToRoute(name: string) {
 						<Icon slot="icon" name="material-symbols:train-outline" />
 						MRT
 					</m3e-nav-item>
+					<m3e-nav-item
+						v-vibrate
+						:selected.prop="routePath.startsWith('/settings')"
+						@click="goToRoute('settings')"
+					>
+						<Icon slot="icon" name="material-symbols:settings-outline" />
+						Settings
+					</m3e-nav-item>
 				</m3e-nav-rail>
+
+				<Transition name="sidebar">
+					<div v-if="isMenuOpen" class="sidebar-nav-menu">
+						<m3e-nav-menu>
+							<m3e-nav-menu-item
+								v-vibrate
+								:selected.prop="routePath.startsWith('/settings')"
+								@click="goToRoute('settings')"
+							>
+								<Icon slot="icon" name="material-symbols:settings-outline" />
+								<span slot="label">Settings</span>
+							</m3e-nav-menu-item>
+						</m3e-nav-menu>
+					</div>
+				</Transition>
 			</ClientOnly>
 
 			<NuxtPage :page-key="(route) => route.name as string" class="page" />
@@ -178,6 +225,7 @@ function goToRoute(name: string) {
 	display: flex;
 	flex-direction: row;
 	min-height: 0;
+	position: relative;
 }
 
 .nav-rail {
@@ -201,7 +249,9 @@ function goToRoute(name: string) {
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	gap: 16px;
+	background-color: var(--md-sys-color-surface-container);
+	width: 100%;
+	box-sizing: border-box;
 }
 
 .search-bar {
@@ -213,6 +263,65 @@ function goToRoute(name: string) {
 	box-sizing: border-box;
 }
 
+.menu-button {
+	display: none;
+	flex-shrink: 0;
+}
+
+.sidebar-enter-active {
+	animation: sidebarSlideIn 0.5s ease;
+}
+
+.sidebar-leave-active {
+	animation: sidebarSlideOut 0.5s ease;
+}
+
+.sidebar-nav-menu {
+	position: absolute;
+	background-color: var(--md-sys-color-surface-container);
+	width: 70%;
+	height: 100%;
+	z-index: 100;
+	border-radius: 0 16px 16px 0;
+}
+
+@keyframes sidebarSlideIn {
+	0% {
+		left: -100%;
+	}
+	100% {
+		left: 0;
+	}
+}
+
+@keyframes sidebarSlideOut {
+	0% {
+		left: 0;
+	}
+	100% {
+		left: -100%;
+	}
+}
+
+.bottom::before {
+	content: '';
+	background-color: rgba(0, 0, 0, 0.5);
+	opacity: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	z-index: 50;
+	transition: opacity 0.5s ease;
+}
+
+.bottom.tint::before {
+	opacity: 1;
+	pointer-events: all;
+}
+
 @media (max-width: 768px) {
 	.bottom {
 		display: grid;
@@ -220,7 +329,13 @@ function goToRoute(name: string) {
 	}
 
 	.search-bar {
-		width: 100%;
+		flex-grow: 1;
+		min-height: 0;
+	}
+
+	.menu-button {
+		display: block;
+		margin-left: 16px;
 	}
 
 	.nav-rail {

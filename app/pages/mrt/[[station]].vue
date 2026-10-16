@@ -43,6 +43,8 @@ const uniqueStations = computed(() => {
 });
 
 const station = computed(() => {
+	if (typeof route.params.station !== 'string') return null;
+
 	return uniqueStations.value?.find(
 		(s) => s.stop_code.toLowerCase() === (route.params.station as string).toLowerCase(),
 	);
