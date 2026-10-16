@@ -8,6 +8,7 @@ import type { GtfsStop } from './types/GtfsStop';
 import type { GtfsStopTime } from './types/GtfsStopTime';
 import type { GtfsData } from './types/GtfsData';
 import fs from 'fs/promises';
+import fsSync from 'fs';
 import path from 'path';
 import JSZip from 'jszip';
 
@@ -113,7 +114,13 @@ async function cacheGtfsFile(gtfsData: GtfsData) {
 	const content = await zip.generateAsync({
 		type: 'nodebuffer',
 	});
-	const outputPath = path.join(process.cwd(), 'server/assets/gtfs-schedule-train.zip');
+	const outputPath = path.join(process.cwd(), 'data/gtfs-schedule-train.zip');
+	const dir = path.dirname(outputPath);
+	if (!fsSync.existsSync(dir)) {
+		await fs.mkdir(dir, {
+			recursive: true,
+		});
+	}
 	await fs.writeFile(outputPath, content);
 	console.info(`info: successfully cached gtfs zip of ${content.byteLength / 1048576} mb`);
 }

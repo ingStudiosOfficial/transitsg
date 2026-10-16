@@ -46,6 +46,15 @@ export default defineNuxtConfig({
 		},
 	},
 
+	nitro: {
+		storage: {
+			data: {
+				driver: 'fs',
+				base: './data',
+			},
+		},
+	},
+
 	pwa: {
 		registerType: 'autoUpdate',
 		strategies: 'generateSW',
@@ -83,7 +92,6 @@ export default defineNuxtConfig({
 		includeAssets: ['public/*'],
 		workbox: {
 			globPatterns: ['**/*.{html,css,js,png,svg,ico,json}'],
-			globIgnores: ['**/bus-routes.json'],
 			globDirectory: 'dist',
 			cacheId: '4',
 			cleanupOutdatedCaches: true,

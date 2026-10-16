@@ -27,40 +27,24 @@ const uniqueStations = computed(() => {
 	return stations.value?.filter((s) => s.parent_station === '');
 });
 
-const { data: lines } = await useFetch('/api/mrt-lines');
-
 const geojson = computed(() => {
 	return {
 		type: 'FeatureCollection',
 		features: uniqueStations.value?.map((s) => {
 			const lon = parseFloat(s.stop_lon);
 			const lat = parseFloat(s.stop_lat);
-			const size = 0.001;
-
-			// TODO: CHANGE THIS TO USE TRIPS AND NOT THIS BCUZ IT DOESNT WORK FOR SENKANG AND PUNGGOL LRTS
-			const line = lines.value?.find((l) => s.stop_id.includes(l.route_short_name));
-			console.log('Line:', line, s.stop_id);
-
-			if (!line) return;
 
 			return {
 				type: 'Feature',
 				geometry: {
-					type: 'Polygon',
-					coordinates: [
-						[
-							[lon - size, lat - size],
-							[lon + size, lat - size],
-							[lon + size, lat + size],
-							[lon - size, lat + size],
-							[lon - size, lat - size],
-						],
-					],
+					type: 'Point',
+					coordinates: [lon, lat],
 				},
 				properties: {
 					id: s.stop_id,
-					bgColor: line?.route_color || circleColor.value,
-					textColor: line?.route_text_color || outlineColor.value,
+					bgColor: s.color || circleColor.value,
+					textColor: s.text_color || outlineColor.value,
+					code: s.stop_code,
 				},
 			};
 		}),
@@ -75,12 +59,23 @@ const geojson = computed(() => {
 			<ClientOnly>
 				<MglMap :map-style="style" :zoom="zoom" :center="center">
 					<MglGeoJsonSource source-id="mrt-stations" :data="toRaw(geojson)">
-						<MglFillLayer
+						<MglCircleLayer
 							source="mrt-stations"
 							layer-id="stations"
 							:paint="{
-								'fill-color': circleColor,
-								'fill-outline-color': outlineColor,
+								'circle-color': ['get', 'bgColor'],
+								'circle-stroke-color': ['get', 'textColor'],
+								'circle-radius': 16,
+							}"
+						/>
+						<MglSymbolLayer
+							layer-id="mrt-codes"
+							:layout="{
+								'text-field': ['get', 'code'],
+								'text-size': 8,
+							}"
+							:paint="{
+								'text-color': ['get', 'textColor'],
 							}"
 						/>
 					</MglGeoJsonSource>

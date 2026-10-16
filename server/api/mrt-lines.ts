@@ -1,17 +1,8 @@
-import { unzipGtfsData } from '../utils/zip';
+import { getGtfsData } from '../utils/gtfs';
 
 export default defineEventHandler(async () => {
 	try {
-		const zipData = await useStorage('assets:server').getItemRaw('gtfs-schedule-train.zip');
-		if (!zipData) {
-			return [];
-		}
-
-		const gtfsData = await unzipGtfsData(zipData);
-
-		const lines = gtfsData.routes;
-
-		return lines;
+		return (await getGtfsData()).routes;
 	} catch (error) {
 		console.error(error);
 		return [];
