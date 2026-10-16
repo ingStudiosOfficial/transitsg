@@ -15,6 +15,7 @@ export default defineEventHandler(async () => {
 				...s,
 				color: `#${line?.route_color}`,
 				text_color: `#${line?.route_text_color}`,
+				line: line,
 			};
 		});
 		return stopsWithColor;

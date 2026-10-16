@@ -31,7 +31,15 @@ const { data: stations } = await useFetch('/api/mrt-stations');
 console.log('Stations:', stations.value);
 
 const uniqueStations = computed(() => {
-	return stations.value?.filter((s) => s.parent_station === '');
+	if (!stations.value) return [];
+	const goneThrough: string[] = [];
+	const unique: GtfsStopColor[] = [];
+	for (const station of stations.value) {
+		if (goneThrough.includes(station.stop_code)) continue;
+		unique.push(station);
+		goneThrough.push(station.stop_code);
+	}
+	return unique;
 });
 
 const station = computed(() => {

@@ -19,7 +19,25 @@ const textColor = computed(() => {
 			<m3e-heading variant="title" size="large">{{ props.station.stop_name }}</m3e-heading>
 		</div>
 		<div slot="content" class="content">
-			<span>{{ props.station.stop_name }}</span> station ({{ props.station.stop_code }})
+			<m3e-list variant="segmented">
+				<m3e-list-item>
+					<m3e-avatar
+						slot="leading"
+						:style="{
+							'--m3e-avatar-color': stationColor,
+						}"
+					>
+						<span
+							:style="{
+								color: textColor,
+								fontFamily: 'lta-identity',
+							}"
+							>{{ props.station.line?.route_short_name }}</span
+						>
+					</m3e-avatar>
+					<span>{{ props.station.line?.route_long_name }}</span>
+				</m3e-list-item>
+			</m3e-list>
 		</div>
 	</m3e-card>
 </template>
@@ -28,7 +46,7 @@ const textColor = computed(() => {
 .header {
 	background-color: v-bind(stationColor);
 	color: v-bind(textColor);
-	border-radius: 8px;
+	border-radius: 16px;
 	box-sizing: border-box;
 	padding: 16px;
 	display: flex;
@@ -40,8 +58,10 @@ const textColor = computed(() => {
 
 .station-code {
 	font-family: 'lta-identity';
+	background-color: v-bind(stationColor);
+	color: v-bind(textColor);
 	border: 2px solid v-bind(textColor);
-	padding: 4px;
+	padding: 4px 8px;
 	box-sizing: border-box;
 	border-radius: 64px;
 }
