@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { vibrate } from '~/plugins/vibrate.client';
+
 definePageMeta({
 	title: 'MRT',
 	name: 'mrt',
+	alias: ['/mrt'],
 });
 
 useSeoMeta({
@@ -20,11 +23,21 @@ useSeoMeta({
 
 const { style, zoom, center, circleColor, outlineColor } = useBus();
 
+const route = useRoute();
+
+const router = useRouter();
+
 const { data: stations } = await useFetch('/api/mrt-stations');
 console.log('Stations:', stations.value);
 
 const uniqueStations = computed(() => {
 	return stations.value?.filter((s) => s.parent_station === '');
+});
+
+const station = computed(() => {
+	return uniqueStations.value?.find(
+		(s) => s.stop_code.toLowerCase() === (route.params.station as string).toLowerCase(),
+	);
 });
 
 const geojson = computed(() => {
@@ -50,12 +63,40 @@ const geojson = computed(() => {
 		}),
 	};
 });
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function handleStationClick(e: any) {
+	vibrate();
+
+	console.log(e);
+
+	const feature = e.features[0];
+	if (!feature) {
+		console.error('No feature found.');
+		return;
+	}
+
+	const properties: {
+		id: string;
+		bgColor: string;
+		textColor: string;
+		code: string;
+	} = feature.properties;
+
+	router.push({
+		name: 'mrt',
+		params: {
+			station: properties.code,
+		},
+	});
+}
 </script>
 
 <template>
 	<div class="bg">
 		<div class="pg">
 			<m3e-heading class="heading" variant="headline" size="large">MRT</m3e-heading>
+			<MrtCard v-if="station" :station="station" />
 			<ClientOnly>
 				<MglMap :map-style="style" :zoom="zoom" :center="center">
 					<MglGeoJsonSource source-id="mrt-stations" :data="toRaw(geojson)">
@@ -67,6 +108,7 @@ const geojson = computed(() => {
 								'circle-stroke-color': ['get', 'textColor'],
 								'circle-radius': 16,
 							}"
+							@click="handleStationClick"
 						/>
 						<MglSymbolLayer
 							layer-id="mrt-codes"
