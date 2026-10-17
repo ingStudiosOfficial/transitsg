@@ -22,9 +22,13 @@ export function stationToLineShortName(stationId: string): string {
 		return 'sk';
 	} else if (id.startsWith('sw')) {
 		return 'sk';
+	} else if (id.startsWith('st')) {
+		return 'sk';
 	} else if (id.startsWith('pe')) {
 		return 'pg';
 	} else if (id.startsWith('pw')) {
+		return 'pg';
+	} else if (id.startsWith('pt')) {
 		return 'pg';
 	} else {
 		return id;
