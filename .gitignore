@@ -26,3 +26,5 @@ logs
 # GTFS train schedue unzipped
 
 gtfs-schedule-train.json
+gtfs-stops.json
+gtfs-routes.json

@@ -1,8 +1,8 @@
-import { getGtfsData } from '../utils/gtfs';
+import { getGtfsRoutes } from '../utils/gtfs';
 
 export default defineEventHandler(async () => {
 	try {
-		return (await getGtfsData()).routes;
+		return await getGtfsRoutes();
 	} catch (error) {
 		console.error(error);
 		return [];
