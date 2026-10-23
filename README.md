@@ -1,75 +1,21 @@
-# Nuxt Minimal Starter
+# transitsg
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+transitsg is a free and open-source web app for viewing Singapore bus arrivals, bus routes, bus stops, MRT stations and more.
 
-## Setup
+Try it out [here](https://transitsg.ingstudios.dev)
 
-Make sure to install dependencies:
+## Gallery
 
-```bash
-# npm
-npm install
+![Home screen](./.github/images/gallery-1.png)
 
-# pnpm
-pnpm install
+![Bus arrivals](./.github/images/gallery-2.png)
 
-# yarn
-yarn install
+![Bus service](./.github/images/gallery-3.png)
 
-# bun
-bun install
-```
+![MRT information](./.github/images/gallery-4.png)
 
-## Development Server
+## License
 
-Start the development server on `http://localhost:3000`:
+transitsg is licensed under the [Apache-2.0 License](./LICENSE).
 
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+© 2026 (ing) Studios and Ethan Lee Qi Yang

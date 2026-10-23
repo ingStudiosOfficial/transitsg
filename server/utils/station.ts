@@ -12,6 +12,8 @@ export function stationToLineShortName(stationId: string): string {
 		return 'ne';
 	} else if (id.startsWith('cc')) {
 		return 'cc';
+	} else if (id.startsWith('ce')) {
+		return 'cc';
 	} else if (id.startsWith('dt')) {
 		return 'dt';
 	} else if (id.startsWith('te')) {
